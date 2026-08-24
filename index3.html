@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>🎀 Barbie - Lista de Tarefas</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Phosphor Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/bold/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                radial-gradient(circle at 20% 20%, #ffffff 0 2px, transparent 3px),
+                radial-gradient(circle at 80% 30%, #ffffff 0 2px, transparent 3px),
+                radial-gradient(circle at 40% 80%, #ffffff 0 2px, transparent 3px),
+                linear-gradient(
+                    135deg,
+                    #ffd6ec,
+                    #ff9ed2,
+                    #f7b2e8,
+                    #d9a7ff
+                );
+
+            background-size: auto, auto, auto, 100% 100%;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           🎀 CARD BARBIE
+        ========================= */
+
+        .barbie-card {
+            background: rgba(255, 255, 255, 0.78);
+            border: 2px solid #ff4fa3;
+            border-radius: 25px;
+
+            box-shadow:
+                0 15px 40px rgba(218, 0, 119, 0.25),
+                0 0 30px rgba(255, 105, 180, 0.25);
+
+            backdrop-filter: blur(12px);
+
+            position: relative;
+            z-index: 10;
+        }
+
+        /* =========================
+           💗 TÍTULO
+        ========================= */
+
+        .titulo {
+            color: #e60073;
+
+            font-family: Georgia, "Times New Roman", serif;
+
+            text-shadow:
+                2px 2px 0 #ffffff,
+                0 0 10px rgba(255, 20, 147, 0.5);
+
+            animation: brilho 2s infinite alternate;
+        }
+
+        .titulo i {
+            color: #ff1493;
+        }
+
+        @keyframes brilho {
+            from {
+                text-shadow:
+                    2px 2px 0 white,
+                    0 0 5px #ff69b4;
+            }
+
+            to {
+                text-shadow:
+                    2px 2px 0 white,
+                    0 0 15px #ff1493,
+                    0 0 25px #ff69b4;
+            }
+        }
+
+        /* =========================
+           💕 INPUT
+        ========================= */
+
+        #tarefa {
+            border: 2px solid #ff69b4;
+            background: #fff7fc;
+            color: #c90063;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #tarefa::placeholder {
+            color: #e48ab7;
+        }
+
+        #tarefa:focus {
+            border-color: #e60073;
+
+            box-shadow:
+                0 0 10px rgba(230, 0, 115, 0.35);
+        }
+
+        /* =========================
+           🎀 BOTÃO ADICIONAR
+        ========================= */
+
+        #criar {
+            background: linear-gradient(
+                135deg,
+                #ff1493,
+                #e60073
+            );
+
+            box-shadow:
+                0 5px 15px rgba(230, 0, 115, 0.35);
+
+            transition: 0.3s;
+        }
+
+        #criar:hover {
+            transform: scale(1.1) rotate(5deg);
+
+            box-shadow:
+                0 8px 25px rgba(230, 0, 115, 0.5);
+        }
+
+        /* =========================
+           💗 LISTA
+        ========================= */
+
+        #listaDeDados {
+            width: 320px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tarefa-card {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.95),
+                rgba(255, 220, 240, 0.95)
+            );
+
+            border: 2px solid #ff69b4;
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 15px rgba(255, 20, 147, 0.2);
+
+            transition: 0.3s;
+        }
+
+        .tarefa-card:hover {
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 10px 25px rgba(255, 20, 147, 0.35);
+
+            border-color: #e60073;
+        }
+
+        .texto-tarefa {
+            color: #d10068;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+        }
+
+        /* =========================
+           🎀 BOTÕES
+        ========================= */
+
+        .btn-tarefa {
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .btn-tarefa:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+
+        .btn-status {
+            background: linear-gradient(
+                135deg,
+                #ff69b4,
+                #ff1493
+            );
+        }
+
+        .btn-edit {
+            background: linear-gradient(
+                135deg,
+                #c77dff,
+                #9d4edd
+            );
+        }
+
+        .btn-delete {
+            background: linear-gradient(
+                135deg,
+                #ff5c8a,
+                #e60046
+            );
+        }
+
+        #confirmEdit {
+            background: linear-gradient(
+                135deg,
+                #ff1493,
+                #c71585
+            );
+
+            box-shadow:
+                0 5px 15px rgba(230, 0, 115, 0.3);
+
+            transition: 0.3s;
+        }
+
+        #confirmEdit:hover {
+            transform: scale(1.08);
+        }
+
+        /* =========================
+           💕 CORAÇÕES
+        ========================= */
+
+        .coracao {
+            position: fixed;
+            color: rgba(255, 20, 147, 0.35);
+            font-size: 25px;
+            animation: flutuar 5s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .coracao1 {
+            top: 10%;
+            left: 10%;
+        }
+
+        .coracao2 {
+            top: 30%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .coracao3 {
+            bottom: 15%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+
+        .coracao4 {
+            bottom: 20%;
+            right: 15%;
+            animation-delay: 3s;
+        }
+
+        @keyframes flutuar {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        /* =========================
+           👱‍♀️ BARBIES FLUTUANTES
+        ========================= */
+
+        .barbie-flutuante {
+            position: fixed;
+
+            width: 110px;
+            height: 150px;
+
+            object-fit: contain;
+
+            pointer-events: none;
+
+            z-index: 3;
+
+            filter:
+                drop-shadow(0 5px 8px rgba(230, 0, 115, 0.3));
+
+            animation:
+                barbieFlutuar 6s ease-in-out infinite;
+        }
+
+        .barbie1 {
+            left: 2%;
+            top: 15%;
+            animation-duration: 5s;
+        }
+
+        .barbie2 {
+            right: 2%;
+            top: 50%;
+            animation-duration: 7s;
+            animation-delay: 1s;
+        }
+
+        .barbie3 {
+            left: 7%;
+            bottom: 5%;
+            width: 90px;
+            animation-duration: 6s;
+            animation-delay: 2s;
+        }
+
+        @keyframes barbieFlutuar {
+
+            0% {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            25% {
+                transform: translateY(-25px) rotate(5deg);
+            }
+
+            50% {
+                transform: translateY(-45px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+        }
+
+        /* =========================
+           📱 RESPONSIVIDADE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .barbie-flutuante {
+                width: 65px;
+                height: 95px;
+            }
+
+            .barbie3 {
+                display: none;
+            }
+        }
+
+        @media (max-width: 400px) {
+
+            .barbie-card {
+                width: 90%;
+            }
+
+            #listaDeDados {
+                width: 90%;
+            }
+
+            #tarefa {
+                width: 210px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 💕 DECORAÇÃO -->
+
+    <div class="coracao coracao1">💗</div>
+    <div class="coracao coracao2">🎀</div>
+    <div class="coracao coracao3">💖</div>
+    <div class="coracao coracao4">✨</div>
+
+
+    <!-- 👱‍♀️ BARBIES FLUTUANTES -->
+
+    <img
+        src="https://pngimg.com/uploads/barbie/barbie_PNG50.png"
+        class="barbie-flutuante barbie1"
+        alt="Barbie">
+
+    <img
+        src="https://pngimg.com/uploads/barbie/barbie_PNG50.png"
+        class="barbie-flutuante barbie2"
+        alt="Barbie">
+
+    <img
+        src="https://pngimg.com/uploads/barbie/barbie_PNG50.png"
+        class="barbie-flutuante barbie3"
+        alt="Barbie">
+
+
+    <!-- 🎀 CARD PRINCIPAL -->
+
+    <div class="flex justify-center mt-10 px-4">
+
+        <div class="barbie-card p-6 w-80">
+
+            <!-- Título -->
+
+            <h1 class="titulo text-2xl text-center mt-2 font-bold">
+
+                <i class="ph-bold ph-sparkle"></i>
+
+                Lista de Tarefas
+
+                <i class="ph-bold ph-sparkle"></i>
+
+            </h1>
+
+
+            <!-- Área de adicionar -->
+
+            <div class="flex flex-col mt-6 w-full justify-center items-center">
+
+                <div class="flex gap-2">
+
+                    <input
+                        placeholder="💗 Digite sua tarefa"
+                        type="text"
+                        name="tarefa"
+                        id="tarefa"
+                        class="rounded-lg py-2 px-3 w-56">
+
+                    <button
+                        id="criar"
+                        class="text-white py-2 px-3 rounded-full">
+
+                        <i class="ph-bold ph-plus"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- Botão confirmar edição -->
+
+                <button
+                    hidden
+                    id="confirmEdit"
+                    class="text-white p-3 rounded-lg mt-5">
+
+                    <i class="ph-bold ph-check"></i>
+
+                    Salvar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LISTA -->
+
+    <div class="flex justify-center px-4">
+
+        <div
+            id="listaDeDados"
+            class="flex flex-col gap-4 mt-6 justify-center items-center">
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        let tarefas = [];
+
+        let idTarefaEditando = null;
+
+
+        /* CRIAR TAREFA */
+
+        document
+            .getElementById("criar")
+            .addEventListener("click", criarTarefa);
+
+
+        function criarTarefa() {
+
+            let tarefa =
+                document
+                .getElementById("tarefa")
+                .value
+                .trim();
+
+
+            if (tarefa === "") {
+
+                alert("💗 Digite uma tarefa!");
+
+                return;
+            }
+
+
+            let idTarefa = tarefas.length;
+
+
+            tarefas.push([
+                idTarefa,
+                tarefa,
+                true
+            ]);
+
+
+            mostrarLista();
+
+
+            document
+                .getElementById("tarefa")
+                .value = "";
+        }
+
+
+        /* MOSTRAR LISTA */
+
+        function mostrarLista() {
+
+            let listaDeDados =
+                document.getElementById("listaDeDados");
+
+
+            listaDeDados.innerHTML = "";
+
+
+            tarefas.forEach(function (tarefa) {
+
+                let icon;
+
+
+                if (tarefa[2] === true) {
+
+                    icon =
+                        `<i class="ph-bold ph-check-circle"></i>`;
+
+                } else {
+
+                    icon =
+                        `<i class="ph-bold ph-circle"></i>`;
+                }
+
+
+                listaDeDados.innerHTML += `
+
+                    <div
+                        class="tarefa-card flex justify-between items-center w-80 p-3">
+
+                        <span
+                            class="texto-tarefa font-bold px-2">
+
+                            ${tarefa[1]}
+
+                        </span>
+
+
+                        <div class="flex gap-2">
+
+                            <button
+                                data-id="${tarefa[0]}"
+                                class="btn-tarefa btn-status p-2 rounded btnStatus">
+
+                                ${icon}
+
+                            </button>
+
+
+                            <button
+                                data-id="${tarefa[0]}"
+                                class="btn-tarefa btn-edit p-2 rounded btnEdit">
+
+                                <i class="ph-bold ph-pencil-simple"></i>
+
+                            </button>
+
+
+                            <button
+                                data-id="${tarefa[0]}"
+                                class="btn-tarefa btn-delete p-2 rounded btnDelete">
+
+                                <i class="ph-bold ph-trash"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+            });
+        }
+
+
+        /* CLIQUES NA LISTA */
+
+        document
+            .getElementById("listaDeDados")
+            .addEventListener("click", function (event) {
+
+                let botao =
+                    event.target.closest("button");
+
+
+                if (!botao) return;
+
+
+                let id =
+                    parseInt(botao.dataset.id);
+
+
+                if (botao.classList.contains("btnEdit")) {
+
+                    editarTarefa(id);
+
+                }
+
+
+                if (botao.classList.contains("btnStatus")) {
+
+                    atualizarStatus(id);
+
+                }
+
+
+                if (botao.classList.contains("btnDelete")) {
+
+                    deletarTarefa(id);
+
+                }
+
+            });
+
+
+        /* EDITAR */
+
+        function editarTarefa(id) {
+
+            idTarefaEditando = id;
+
+
+            document
+                .getElementById("tarefa")
+                .value = tarefas[id][1];
+
+
+            document
+                .getElementById("confirmEdit")
+                .removeAttribute("hidden");
+
+
+            document
+                .getElementById("tarefa")
+                .focus();
+        }
+
+
+        /* CONFIRMAR EDIÇÃO */
+
+        document
+            .getElementById("confirmEdit")
+            .addEventListener("click", function () {
+
+                if (idTarefaEditando === null) {
+                    return;
+                }
+
+
+                let novaTarefa =
+                    document
+                    .getElementById("tarefa")
+                    .value
+                    .trim();
+
+
+                if (novaTarefa === "") {
+
+                    alert("💗 Digite uma tarefa!");
+
+                    return;
+                }
+
+
+                tarefas[idTarefaEditando][1] =
+                    novaTarefa;
+
+
+                idTarefaEditando = null;
+
+
+                document
+                    .getElementById("tarefa")
+                    .value = "";
+
+
+                document
+                    .getElementById("confirmEdit")
+                    .setAttribute("hidden", true);
+
+
+                mostrarLista();
+
+            });
+
+
+        /* ATUALIZAR STATUS */
+
+        function atualizarStatus(id) {
+
+            tarefas[id][2] =
+                !tarefas[id][2];
+
+
+            mostrarLista();
+        }
+
+
+        /* DELETAR */
+
+        function deletarTarefa(id) {
+
+            tarefas =
+                tarefas.filter(function (tarefa) {
+
+                    return tarefa[0] !== id;
+
+                });
+
+
+            mostrarLista();
+        }
+
+
+        /* ENTER PARA CRIAR */
+
+        document
+            .getElementById("tarefa")
+            .addEventListener("keydown", function (event) {
+
+                if (event.key === "Enter") {
+
+                    if (idTarefaEditando !== null) {
+
+                        document
+                            .getElementById("confirmEdit")
+                            .click();
+
+                    } else {
+
+                        criarTarefa();
+
+                    }
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>

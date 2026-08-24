@@ -1,0 +1,76 @@
+/* =========================
+   🎀 BARBIES FLUTUANTES
+========================= */
+
+.barbie-flutuante {
+    position: fixed;
+    width: 100px;
+    height: 140px;
+    object-fit: contain;
+    z-index: 1;
+    pointer-events: none;
+
+    animation: barbieFlutuar 6s ease-in-out infinite;
+    filter: drop-shadow(0 5px 8px rgba(230, 0, 115, 0.3));
+}
+
+/* Barbie do lado esquerdo */
+.barbie1 {
+    left: 2%;
+    top: 15%;
+    animation-duration: 5s;
+}
+
+/* Barbie do lado direito */
+.barbie2 {
+    right: 2%;
+    top: 55%;
+    animation-duration: 7s;
+    animation-delay: 1s;
+}
+
+/* Barbie embaixo */
+.barbie3 {
+    left: 8%;
+    bottom: 5%;
+    width: 80px;
+    animation-duration: 6s;
+    animation-delay: 2s;
+}
+
+/* Animação */
+@keyframes barbieFlutuar {
+
+    0% {
+        transform: translateY(0) rotate(-5deg);
+    }
+
+    25% {
+        transform: translateY(-25px) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(-45px) rotate(-5deg);
+    }
+
+    75% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+}
+
+/* Evita que as Barbies atrapalhem no celular */
+@media (max-width: 600px) {
+
+    .barbie-flutuante {
+        width: 65px;
+        height: 95px;
+    }
+
+    .barbie3 {
+        display: none;
+    }
+}
